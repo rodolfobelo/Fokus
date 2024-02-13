@@ -8,6 +8,7 @@ const botoes = document.querySelectorAll('.app__card-button');
 const startPauseBt = document.querySelector('#start-pause');
 const iniciarOuPausarBt = document.querySelector('#start-pause span');
 const imgBtnComecarPausar = document.querySelector('.app__card-primary-butto-icon')
+const tempoNaTela = document.querySelector('#timer');
 
 const musicaFocoInput = document.querySelector('#alternar-musica');
 const musica = new Audio('./sons/luna-rise-part-one.mp3');
@@ -15,7 +16,7 @@ const audioPlay = new Audio('./sons/play.wav');
 const audioPause = new Audio('./sons/pause.mp3');
 const audioTempoFInalizado = new Audio('./sons/beep.mp3');
 
-let tempoDecorridoEmSegundos = 5;
+let tempoDecorridoEmSegundos = 1500;
 let intervaloId = null;
 
 musica.loop = true;
@@ -29,16 +30,19 @@ musicaFocoInput.addEventListener('change', () => {
 })
 
 focoBt.addEventListener('click', () => {
+    tempoDecorridoEmSegundos = 1500;
     alterarContexto('foco');
     focoBt.classList.add('active');
 })
 
 curtoBt.addEventListener('click', () => {
+    tempoDecorridoEmSegundos = 300;
     alterarContexto('descanso-curto');
     curtoBt.classList.add('active');
 })
 
 longoBt.addEventListener('click', () => {
+    tempoDecorridoEmSegundos = 900;
     alterarContexto('descanso-longo');
     longoBt.classList.add('active');
 })
@@ -46,8 +50,9 @@ longoBt.addEventListener('click', () => {
 function alterarContexto(contexto) {
     botoes.forEach(contexto => {
         contexto.classList.remove('active');
-        console.log(contexto);
-        console.log(botoes);
+        mostrarTempo();        
+        // console.log(contexto);
+        // console.log(botoes);
         
     });
     html.setAttribute('data-contexto', contexto);
@@ -57,12 +62,15 @@ function alterarContexto(contexto) {
         case "foco":
             titulo.innerHTML = `Otimize sua produtividade,<br>
             <strong class="app__title-strong">mergulhe no que importa.</strong>`;
+            
             break;
         case "descanso-curto":
             titulo.innerHTML = `Que tal dar uma respirada? <strong class="app__title-strong">Faça uma pausa curta!</strong>`;
+            
             break;
         case "descanso-longo":
             titulo.innerHTML = `Hora de voltar à superfície.<strong class="app__title-strong"> Faça uma pausa longa.</strong>`;
+            
             break;
         default:
             break;
@@ -77,8 +85,9 @@ const contagemRegressiva = () => {
         return;
     }
     tempoDecorridoEmSegundos -= 1;
-    console.log('Tempo ' + tempoDecorridoEmSegundos);
-    console.log('Id ' + intervaloId);
+    // console.log('Tempo ' + tempoDecorridoEmSegundos);
+    // console.log('Id ' + intervaloId);
+    mostrarTempo();
 }
 
 startPauseBt.addEventListener('click', iniciarOuPausar);
@@ -100,4 +109,13 @@ function zerar () {
     iniciarOuPausarBt.textContent = "Começar";
     imgBtnComecarPausar.setAttribute('src', `./imagens/play_arrow.png`);
     intervaloId = null;
+
 }
+
+function mostrarTempo() {
+    const tempo = new Date(tempoDecorridoEmSegundos * 1000)
+    const tempoFormatado = tempo.toLocaleTimeString('pt-Br', {minute: '2-digit', second: '2-digit'})
+    tempoNaTela.innerHTML = `${tempoFormatado}`
+}
+
+mostrarTempo();
